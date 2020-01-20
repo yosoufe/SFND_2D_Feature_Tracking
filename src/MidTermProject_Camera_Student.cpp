@@ -25,11 +25,13 @@ int main(int argc, const char *argv[])
 {
     // parse command line arguments:
     static const char *const usage[] = {
-        "./2D_feature_tracking args",
+        "./2D_feature_tracking [args]\n"
+        "For example: ./2D_feature_tracking --detector_type=HARRIS --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN",
         NULL,
-        NULL,
+        NULL
     };
 
+    // arguments with default values
     const char* detectorTypeC = "SHITOMASI";
     const char* matcherTypeC = "MAT_BF";          // MAT_BF, MAT_FLANN
     const char* descriptorTypeC = "DES_HOG";   // DES_BINARY, DES_HOG
