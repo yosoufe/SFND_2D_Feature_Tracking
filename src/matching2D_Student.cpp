@@ -165,3 +165,26 @@ void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool
         cv::waitKey(0);
     }
 }
+
+void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
+{
+    cv::Ptr<cv::FeatureDetector> detector = nullptr;
+    if (detectorType.compare("FAST") == 0)
+    {
+        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
+        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
+        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
+        detector = cv::FastFeatureDetector::create(threshold, bNMS, type);
+    // https://docs.opencv.org/4.1.0/d5/d51/group__features2d__main.html
+    // BRISK, ORB, AKAZE, and SIFT
+    } else if (detectorType.compare("BRISK") == 0){
+        detector = cv::BRISK::create();
+    } else if (detectorType.compare("ORB") == 0){
+        detector = cv::ORB::create();
+    } else if (detectorType.compare("AKAZE") == 0){
+        detector = cv::AKAZE::create();
+    } else if (detectorType.compare("SIFT") == 0){
+        detector = cv::xfeatures2d::SIFT::create();
+    } 
+    if (detector) detector->detect(img, keypoints);
+}
