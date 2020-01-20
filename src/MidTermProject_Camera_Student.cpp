@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
     // parse command line arguments:
     static const char *const usage[] = {
         "./2D_feature_tracking [args]\n"
-        "For example: ./2D_feature_tracking --detector_type=HARRIS --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN",
+        "For example: ./2D_feature_tracking --detector_type=BRISK --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN",
         NULL,
         NULL
     };
@@ -34,16 +34,16 @@ int main(int argc, const char *argv[])
     // arguments with default values
     const char* detectorTypeC = "SHITOMASI";
     const char* matcherTypeC = "MAT_BF";          // MAT_BF, MAT_FLANN
-    const char* descriptorTypeC = "DES_HOG";   // DES_BINARY, DES_HOG
+    const char* descriptorTypeC = "BRISK";        // BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
     const char* selectorTypeC = "SEL_NN";         // SEL_NN, SEL_KNN
 
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_GROUP("Optional Arguments: "),
-        OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT, default: SHITOMASI"),
-        OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN, default: MAT_BF"),
-        OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: DES_BINARY, DES_HOG, default: DES_HOG"),
-        OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN, default: SEL_NN"),
+        OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT \n\t\t\t\tdefault: SHITOMASI"),
+        OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN, \n\t\t\t\tdefault: MAT_BF"),
+        OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT \n\t\t\t\tdefault: BRISK"),
+        OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN, \n\t\t\t\tdefault: SEL_NN"),
         OPT_END(),
     };
     struct argparse argparse;
@@ -51,9 +51,10 @@ int main(int argc, const char *argv[])
     argparse_describe(&argparse, "\nExplores differenet 2d keypoint detector, descriptor and matching", NULL);
     argc = argparse_parse(&argparse, argc, argv);
 
-    std::cout << detectorTypeC << " " << matcherTypeC  << " " << descriptorTypeC << " " << selectorTypeC << std::endl;
-
-    exit(0);
+    std::string detectorType(detectorTypeC);
+    std::string matcherType(matcherTypeC);    
+    std::string descriptorType(descriptorTypeC);
+    std::string selectorType(selectorTypeC);
 
     /* INIT VARIABLES AND DATA STRUCTURES */
 
@@ -115,7 +116,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
+        // detectorType = "SHITOMASI";
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.2 -> add the following keypoint detectors in file matching2D.cpp and enable string-based selection based on detectorType
@@ -125,9 +126,9 @@ int main(int argc, const char *argv[])
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
         }
-        else
+        else if (detectorType.compare("HARRIS") == 0)
         {
-            //...
+            detKeypointsHarris(keypoints, imgGray, false);
         }
         //// EOF STUDENT ASSIGNMENT
 
@@ -169,7 +170,7 @@ int main(int argc, const char *argv[])
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
         //// EOF STUDENT ASSIGNMENT
 
