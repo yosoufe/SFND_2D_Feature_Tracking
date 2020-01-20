@@ -16,11 +16,42 @@
 #include "dataStructures.h"
 #include "matching2D.hpp"
 
+#include "argparse.h"
+
 using namespace std;
 
 /* MAIN PROGRAM */
 int main(int argc, const char *argv[])
 {
+    // parse command line arguments:
+    static const char *const usage[] = {
+        "./2D_feature_tracking args",
+        NULL,
+        NULL,
+    };
+
+    const char* detectorTypeC = "SHITOMASI";
+    const char* matcherTypeC = "MAT_BF";          // MAT_BF, MAT_FLANN
+    const char* descriptorTypeC = "DES_HOG";   // DES_BINARY, DES_HOG
+    const char* selectorTypeC = "SEL_NN";         // SEL_NN, SEL_KNN
+
+    struct argparse_option options[] = {
+        OPT_HELP(),
+        OPT_GROUP("Optional Arguments: "),
+        OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT, default: SHITOMASI"),
+        OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN, default: MAT_BF"),
+        OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: DES_BINARY, DES_HOG, default: DES_HOG"),
+        OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN, default: SEL_NN"),
+        OPT_END(),
+    };
+    struct argparse argparse;
+    argparse_init(&argparse, options, usage, 0);
+    argparse_describe(&argparse, "\nExplores differenet 2d keypoint detector, descriptor and matching", NULL);
+    argc = argparse_parse(&argparse, argc, argv);
+
+    std::cout << detectorTypeC << " " << matcherTypeC  << " " << descriptorTypeC << " " << selectorTypeC << std::endl;
+
+    exit(0);
 
     /* INIT VARIABLES AND DATA STRUCTURES */
 
