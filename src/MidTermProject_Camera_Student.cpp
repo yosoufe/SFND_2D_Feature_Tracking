@@ -62,7 +62,18 @@ int main(int argc, const char *argv[])
         // push image into data frame buffer
         DataFrame frame;
         frame.cameraImg = imgGray;
-        dataBuffer.push_back(frame);
+        if (dataBuffer.size() < dataBufferSize)
+        {
+            dataBuffer.push_back(frame);
+        } else
+        {
+            for ( auto it = dataBuffer.begin() ; it != dataBuffer.end()-1 ; it++ )
+            {
+                *it = *(it+1);
+            }
+            dataBuffer[dataBufferSize - 1] = frame;
+        }
+        
 
         //// EOF STUDENT ASSIGNMENT
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
