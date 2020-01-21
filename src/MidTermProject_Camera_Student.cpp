@@ -31,19 +31,25 @@ int main(int argc, const char *argv[])
         NULL
     };
 
-    // arguments with default values
-    const char* detectorTypeC = "SHITOMASI";
+    // default values for arguments
+    const char* detectorTypeC = "SHITOMASI";      // SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT
     const char* matcherTypeC = "MAT_BF";          // MAT_BF, MAT_FLANN
     const char* descriptorTypeC = "BRISK";        // BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
     const char* selectorTypeC = "SEL_NN";         // SEL_NN, SEL_KNN
+    bool bFocusOnVehicle = false;
+    bool bLimitKpts = false;
 
     struct argparse_option options[] = {
         OPT_HELP(),
         OPT_GROUP("Optional Arguments: "),
-        OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT \n\t\t\t\tdefault: SHITOMASI"),
+        OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT"
+                                                        " \n\t\t\t\tif compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA"
+                                                        " \n\t\t\t\tdefault: SHITOMASI"),
         OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN, \n\t\t\t\tdefault: MAT_BF"),
         OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT \n\t\t\t\tdefault: BRISK"),
         OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN, \n\t\t\t\tdefault: SEL_NN"),
+        OPT_BOOLEAN('f', "focus_on_vehicle", &bFocusOnVehicle, "To focus on only keypoints that are on the preceding vehicle."),
+        OPT_BOOLEAN('l', "limit_keypoints", &bLimitKpts, "To limit the number of keypoints to maximum 50 keypoints."),
         OPT_END(),
     };
     struct argparse argparse;
@@ -133,8 +139,10 @@ int main(int argc, const char *argv[])
         else if (detectorType.compare("FAST") == 0 || 
                     detectorType.compare("BRISK") == 0 || 
                     detectorType.compare("ORB") == 0 || 
-                    detectorType.compare("AKAZE") == 0 || 
-                    detectorType.compare("SIFT") == 0)
+                    detectorType.compare("AKAZE") == 0  || 
+                    detectorType.compare("SIFT") == 0 || 
+                    detectorType.compare("ORB_CUDA") == 0 || 
+                    detectorType.compare("FAST_CUDA") == 0 )
         {
             detKeypointsModern(keypoints, imgGray, detectorType, false);
         }
@@ -144,10 +152,9 @@ int main(int argc, const char *argv[])
         //// TASK MP.3 -> only keep keypoints on the preceding vehicle
 
         // only keep keypoints on the preceding vehicle
-        bool bFocusOnVehicle = true;
-        cv::Rect vehicleRect(535, 180, 180, 150);
         if (bFocusOnVehicle)
         {
+            cv::Rect vehicleRect(535, 180, 180, 150);
             std::vector<cv::KeyPoint> kp_on_preceding_car;
             for (auto & kpt : keypoints)
             {
@@ -160,7 +167,6 @@ int main(int argc, const char *argv[])
         //// EOF STUDENT ASSIGNMENT
 
         // optional : limit number of keypoints (helpful for debugging and learning)
-        bool bLimitKpts = false;
         if (bLimitKpts)
         {
             int maxKeypoints = 50;

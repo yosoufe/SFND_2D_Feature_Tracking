@@ -48,10 +48,29 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
     }
-    else
+    // BRIEF, ORB, FREAK, AKAZE, SIFT
+    else if (descriptorType.compare("BRIEF") == 0)
     {
-
-        //...
+        int bytes=32;               // length of the descriptor in bytes, valid values are: 16, 32 (default) or 64 .
+        bool use_orientation=false; // sample patterns using keypoints orientation, disabled by default.
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create(bytes, use_orientation);
+        
+    }
+    else if (descriptorType.compare("ORB") == 0)
+    {
+        extractor = cv::ORB::create();
+    } 
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+        extractor = cv::xfeatures2d::FREAK::create();
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+        extractor = cv::AKAZE::create();
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+        extractor = cv::xfeatures2d::SIFT::create();
     }
 
     // perform feature description
@@ -186,5 +205,35 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     } else if (detectorType.compare("SIFT") == 0){
         detector = cv::xfeatures2d::SIFT::create();
     } 
-    if (detector) detector->detect(img, keypoints);
+    if (detector) 
+    {
+        double t = (double)cv::getTickCount();
+        detector->detect(img, keypoints);
+        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+        cout << detectorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
+        return;
+    }
+
+#if WITH_CUDA
+    if(detectorType.compare("ORB_CUDA") == 0)
+    {
+        detector = cv::cuda::ORB::create();
+    } 
+    else if(detectorType.compare("FAST_CUDA") == 0)
+    {
+        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
+        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
+        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
+        detector = cv::cuda::FastFeatureDetector::create(threshold, bNMS, type);
+    }
+    if (detector) 
+    {
+        cv::cuda::GpuMat imageGpu;
+        imageGpu.upload(img);
+        double t = (double)cv::getTickCount();
+        detector->detect(imageGpu, keypoints);
+        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+        cout << detectorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
+    }
+#endif // WITH_CUDA
 }

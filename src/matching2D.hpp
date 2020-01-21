@@ -18,6 +18,10 @@
 
 #include "dataStructures.h"
 
+#ifdef WITH_CUDA
+#include "opencv2/cudafeatures2d.hpp"
+#endif // WITH_CUDA
+
 
 void detKeypointsHarris(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);
 void detKeypointsShiTomasi(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis=false);
