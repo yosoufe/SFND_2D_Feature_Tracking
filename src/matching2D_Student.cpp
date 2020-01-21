@@ -38,7 +38,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
 void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descriptors, string descriptorType)
 {
     // select appropriate descriptor
-    cv::Ptr<cv::DescriptorExtractor> extractor;
+    cv::Ptr<cv::DescriptorExtractor> extractor = nullptr;
     if (descriptorType.compare("BRISK") == 0)
     {
 
@@ -73,11 +73,39 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         extractor = cv::xfeatures2d::SIFT::create();
     }
 
-    // perform feature description
-    double t = (double)cv::getTickCount();
-    extractor->compute(img, keypoints, descriptors);
-    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-    cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0 << " ms" << endl;
+    if (extractor) 
+    {
+        // perform feature description
+        double t = (double)cv::getTickCount();
+        extractor->compute(img, keypoints, descriptors);
+        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+        cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0 << " ms" << endl;
+        return;
+    }
+#if WITH_CUDA
+    if(descriptorType.compare("ORB_CUDA") == 0)
+    {
+        extractor = cv::cuda::ORB::create();
+    } 
+    else if(descriptorType.compare("FAST_CUDA") == 0)
+    {
+        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
+        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
+        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
+        extractor = cv::cuda::FastFeatureDetector::create(threshold, bNMS, type);
+    }
+    if (extractor) 
+    {
+        cv::cuda::GpuMat imageGpu;
+        cv::cuda::GpuMat d_descriptors;
+        imageGpu.upload(img);
+        double t = (double)cv::getTickCount();
+        extractor->compute(imageGpu, keypoints, d_descriptors);
+        d_descriptors.download(descriptors);
+        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+        cout << descriptorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
+    }
+#endif // WITH_CUDA
 }
 
 // Detect keypoints in image using the traditional Shi-Thomasi detector
