@@ -4,22 +4,77 @@
 using namespace std;
 
 // Find best matches for keypoints in two camera images based on several matching methods
-void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
-                      std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)
+void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef,
+                         cv::Mat &descSource, cv::Mat &descRef,
+                         std::vector<cv::DMatch> &matches, 
+                         std::string descriptorType, 
+                         std::string matcherType, 
+                         std::string selectorType)
 {
     // configure matcher
     bool crossCheck = false;
+    // DES_BINARY, DES_HOG
+    int normType;
+    if (descriptorType.compare("ORB") == 0 ||
+        descriptorType.compare("BRISK") == 0 ||
+        descriptorType.compare("BRIEF") == 0 ||
+        descriptorType.compare("AKAZE") == 0 ||
+        descriptorType.compare("ORB_CUDA") == 0)
+        normType = cv::NORM_HAMMING;
+    else if(descriptorType.compare("SIFT") == 0)
+        normType = cv::NORM_L2;
+
     cv::Ptr<cv::DescriptorMatcher> matcher;
 
     if (matcherType.compare("MAT_BF") == 0)
     {
-        int normType = cv::NORM_HAMMING;
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
     else if (matcherType.compare("MAT_FLANN") == 0)
     {
-        // ...
+        if (descSource.type() != CV_32F)
+        { // OpenCV bug workaround : convert binary descriptors to floating point due to a bug in current OpenCV implementation
+            descSource.convertTo(descSource, CV_32F);
+            descRef.convertTo(descRef, CV_32F);
+        }
+
+        matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
     }
+#if WITH_CUDA
+    cv::Ptr<cv::cuda::DescriptorMatcher> cuda_matcher;
+    cv::cuda::GpuMat d_descSource;
+    cv::cuda::GpuMat d_descRef;
+    if (matcherType.compare("MAT_BF_CUDA") == 0)
+    {
+        cuda_matcher = cv::cuda::DescriptorMatcher::createBFMatcher(normType);
+        d_descSource.upload(descSource);
+        d_descRef.upload(descRef);
+    }
+    // perform matching task
+    if (cuda_matcher)
+    {
+        if (selectorType.compare("SEL_NN") == 0)
+        { // nearest neighbor (best match)
+            cuda_matcher->match(d_descSource, d_descRef, matches); // Finds the best match for each descriptor in desc1
+        }
+        else if (selectorType.compare("SEL_KNN") == 0)
+        { // k nearest neighbors (k=2)
+            std::vector< std::vector<cv::DMatch> > knn_matches;
+            cuda_matcher->knnMatch( d_descSource, d_descRef, knn_matches, 2 );
+
+            // filter matches using descriptor distance ratio test
+            double minDescDistRatio = 0.8;
+            for (auto it = knn_matches.begin(); it != knn_matches.end(); ++it)
+            {
+                if ((*it)[0].distance < minDescDistRatio * (*it)[1].distance)
+                {
+                    matches.push_back((*it)[0]);
+                }
+            }
+        }
+        return;
+    }
+#endif
 
     // perform matching task
     if (selectorType.compare("SEL_NN") == 0)
@@ -29,8 +84,18 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     }
     else if (selectorType.compare("SEL_KNN") == 0)
     { // k nearest neighbors (k=2)
+        std::vector< std::vector<cv::DMatch> > knn_matches;
+        matcher->knnMatch( descSource, descRef, knn_matches, 2 );
 
-        // ...
+        // filter matches using descriptor distance ratio test
+        double minDescDistRatio = 0.8;
+        for (auto it = knn_matches.begin(); it != knn_matches.end(); ++it)
+        {
+            if ((*it)[0].distance < minDescDistRatio * (*it)[1].distance)
+            {
+                matches.push_back((*it)[0]);
+            }
+        }
     }
 }
 
@@ -86,13 +151,6 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
     if(descriptorType.compare("ORB_CUDA") == 0)
     {
         extractor = cv::cuda::ORB::create();
-    } 
-    else if(descriptorType.compare("FAST_CUDA") == 0)
-    {
-        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
-        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
-        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
-        extractor = cv::cuda::FastFeatureDetector::create(threshold, bNMS, type);
     }
     if (extractor) 
     {

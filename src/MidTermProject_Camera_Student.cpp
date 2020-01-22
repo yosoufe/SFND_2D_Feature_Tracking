@@ -43,11 +43,16 @@ int main(int argc, const char *argv[])
         OPT_HELP(),
         OPT_GROUP("Optional Arguments: "),
         OPT_STRING('\0', "detector_type", &detectorTypeC, "detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT"
-                                                        " \n\t\t\t\tif compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA"
-                                                        " \n\t\t\t\tdefault: SHITOMASI"),
-        OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN, \n\t\t\t\tdefault: MAT_BF"),
-        OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT \n\t\t\t\tdefault: BRISK"),
-        OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN, \n\t\t\t\tdefault: SEL_NN"),
+                                                          "\n\t\t\t\tif compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA"
+                                                          "\n\t\t\t\tdefault: SHITOMASI"),
+        OPT_STRING('\0', "matcher_type", &matcherTypeC, "matcher type, options: MAT_BF, MAT_FLANN,"
+                                                        "\n\t\t\t\tif compiled (WITH_CUDA on): MAT_BF_CUDA"
+                                                        "\n\t\t\t\tdefault: MAT_BF"),
+        OPT_STRING('\0', "descriptor_type", &descriptorTypeC, "descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT"
+                                                              "\n\t\t\t\tif compiled (WITH_CUDA on): ORB_CUDA"
+                                                              "\n\t\t\t\tdefault: BRISK"),
+        OPT_STRING('\0', "selector_type", &selectorTypeC, "selector type, options: SEL_NN, SEL_KNN"
+                                                          "\n\t\t\t\tdefault: SEL_NN"),
         OPT_BOOLEAN('f', "focus_on_vehicle", &bFocusOnVehicle, "To focus on only keypoints that are on the preceding vehicle."),
         OPT_BOOLEAN('l', "limit_keypoints", &bLimitKpts, "To limit the number of keypoints to maximum 50 keypoints."),
         OPT_END(),
@@ -205,9 +210,8 @@ int main(int argc, const char *argv[])
             /* MATCH KEYPOINT DESCRIPTORS */
 
             vector<cv::DMatch> matches;
-            string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
-            string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
-            string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
+            // string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
+            // string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
 
             //// STUDENT ASSIGNMENT
             //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
