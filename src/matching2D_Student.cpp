@@ -18,7 +18,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     if (descriptorType.compare("ORB") == 0 ||
         descriptorType.compare("BRISK") == 0 ||
         descriptorType.compare("BRIEF") == 0 ||
-        descriptorType.compare("AKAZE") == 0 ||
+        descriptorType.compare("AKAZE") == 0 || 
+        descriptorType.compare("FREAK") == 0||
         descriptorType.compare("ORB_CUDA") == 0)
         normType = cv::NORM_HAMMING;
     else if(descriptorType.compare("SIFT") == 0)
