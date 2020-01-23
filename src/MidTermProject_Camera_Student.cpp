@@ -38,6 +38,7 @@ int main(int argc, const char *argv[])
     const char* selectorTypeC = "SEL_NN";         // SEL_NN, SEL_KNN
     bool bFocusOnVehicle = false;
     bool bLimitKpts = false;
+    bool bQuiet = false;
 
     struct argparse_option options[] = {
         OPT_HELP(),
@@ -55,6 +56,7 @@ int main(int argc, const char *argv[])
                                                           "\n\t\t\t\tdefault: SEL_NN"),
         OPT_BOOLEAN('f', "focus_on_vehicle", &bFocusOnVehicle, "To focus on only keypoints that are on the preceding vehicle."),
         OPT_BOOLEAN('l', "limit_keypoints", &bLimitKpts, "To limit the number of keypoints to maximum 50 keypoints."),
+        OPT_BOOLEAN('q', "quiet", &bQuiet, "If this flaged is chosen no image would be shown. Good for performance measurement"),
         OPT_END(),
     };
     struct argparse argparse;
@@ -121,7 +123,7 @@ int main(int argc, const char *argv[])
         
 
         //// EOF STUDENT ASSIGNMENT
-        cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
+        if (!bQuiet) cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -166,6 +168,7 @@ int main(int argc, const char *argv[])
                     kp_on_preceding_car.push_back(kpt);
             }
             keypoints = kp_on_preceding_car;
+            cout << "Number of Keypoints on Preceding Vehicle: " << keypoints.size() << endl;
         }
 
         //// EOF STUDENT ASSIGNMENT
@@ -180,12 +183,12 @@ int main(int argc, const char *argv[])
                 keypoints.erase(keypoints.begin() + maxKeypoints, keypoints.end());
             }
             cv::KeyPointsFilter::retainBest(keypoints, maxKeypoints);
-            cout << " NOTE: Keypoints have been limited!" << endl;
+            if (!bQuiet) cout << " NOTE: Keypoints have been limited!" << endl;
         }
 
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
-        cout << "#2 : DETECT KEYPOINTS done" << endl;
+        if (!bQuiet) cout << "#2 : DETECT KEYPOINTS done" << endl;
 
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
@@ -200,7 +203,7 @@ int main(int argc, const char *argv[])
         // push descriptors for current frame to end of data buffer
         (dataBuffer.end() - 1)->descriptors = descriptors;
 
-        cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
+        if (!bQuiet) cout << "#3 : EXTRACT DESCRIPTORS done" << endl;
 
         if (dataBuffer.size() > 1) // wait until at least two images have been processed
         {
@@ -216,16 +219,18 @@ int main(int argc, const char *argv[])
             matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                              (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
                              matches, descriptorType, matcherType, selectorType);
+            
+            cout << "Number of Matched Keypoints: " <<  matches.size() << endl;
 
             //// EOF STUDENT ASSIGNMENT
 
             // store matches in current data frame
             (dataBuffer.end() - 1)->kptMatches = matches;
 
-            cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
+            if (!bQuiet) cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = true;
+            bVis = !bQuiet;
             if (bVis)
             {
                 cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
@@ -241,7 +246,6 @@ int main(int argc, const char *argv[])
                 cout << "Press key to continue to next image" << endl;
                 cv::waitKey(0); // wait for key to be pressed
             }
-            bVis = false;
         }
 
     } // eof loop over all images
