@@ -142,10 +142,7 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
     if (extractor) 
     {
         // perform feature description
-        double t = (double)cv::getTickCount();
         extractor->compute(img, keypoints, descriptors);
-        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << descriptorType << " descriptor extraction in " << 1000 * t / 1.0 << " ms" << endl;
         return;
     }
 #if WITH_CUDA
@@ -158,11 +155,9 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         cv::cuda::GpuMat imageGpu;
         cv::cuda::GpuMat d_descriptors;
         imageGpu.upload(img);
-        double t = (double)cv::getTickCount();
         extractor->compute(imageGpu, keypoints, d_descriptors);
         d_descriptors.download(descriptors);
-        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << descriptorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
+        
     }
 #endif // WITH_CUDA
 }
@@ -180,7 +175,6 @@ void detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool b
     double k = 0.04;
 
     // Apply corner detection
-    double t = (double)cv::getTickCount();
     vector<cv::Point2f> corners;
     cv::goodFeaturesToTrack(img, corners, maxCorners, qualityLevel, minDistance, cv::Mat(), blockSize, false, k);
 
@@ -193,8 +187,6 @@ void detKeypointsShiTomasi(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool b
         newKeyPoint.size = blockSize;
         keypoints.push_back(newKeyPoint);
     }
-    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-    cout << "Shi-Tomasi detection with n=" << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
 
     // visualize results
     if (bVis)
@@ -294,10 +286,7 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     } 
     if (detector) 
     {
-        double t = (double)cv::getTickCount();
         detector->detect(img, keypoints);
-        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << detectorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
         return;
     }
 
@@ -317,10 +306,7 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     {
         cv::cuda::GpuMat imageGpu;
         imageGpu.upload(img);
-        double t = (double)cv::getTickCount();
         detector->detect(imageGpu, keypoints);
-        t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-        cout << detectorType << " keypoint detection in " << 1000 * t / 1.0 << " ms" << endl;
     }
 #endif // WITH_CUDA
 }

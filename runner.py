@@ -81,7 +81,39 @@ def task_8():
             print(print_str)
 
 def task_9():
-    pass
+    floating_pattern = "([0-9]*.[0-9]+)"
+    detection_time_regex = re.compile(
+            ".* keypoints in {} ms".format(floating_pattern))
+    extraction_time_regex = re.compile(
+            ".* descriptor extraction in {} ms".format(floating_pattern))
+    for detector in detector_types:
+        for descriptor in descriptor_types:
+            det_time = []
+            ext_time = []
+            total_time = []
+            runner = run_command(detector_type = detector,
+                                 descriptor_type = descriptor,
+                                 selector_type = "SEL_KNN")
+            for l in runner:
+                match_det = detection_time_regex.match(l)
+                match_ext = extraction_time_regex.match(l)
+                if match_det:
+                    det_time.append(float(match_det.group(1)))
+                elif match_ext:
+                    ext_time.append(float(match_ext.group(1)))
+            
+            if len(det_time) == len(ext_time):
+                for i in range(len(det_time)):
+                    total_time.append(det_time[i] + ext_time[i])
+            else:
+                print (detector, descriptor, det_time, ext_time)
+                break
+            
+            print_str = "=SPLIT(\" {}, {} ".format(detector, descriptor)
+            for n in total_time:
+                print_str = print_str + ",{0:f} ".format(n)
+            print_str = print_str + "\", \",\")"
+            print(print_str)
 
 if __name__ == "__main__":
     if with_cuda == False:
