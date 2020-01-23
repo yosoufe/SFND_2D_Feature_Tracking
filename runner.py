@@ -1,12 +1,15 @@
 import subprocess
 import re
 
+with_cuda = True
+
 detector_types = ["SHITOMASI", "HARRIS", "FAST",
                   "FAST_CUDA", "BRISK", "ORB", "ORB_CUDA", "AKAZE", "SIFT"]
 matcher_types = ["MAT_BF", "MAT_FLANN", "MAT_BF_CUDA"]
 descriptor_types = ["BRISK", "BRIEF", "ORB",
                     "ORB_CUDA", "FREAK", "AKAZE", "SIFT"]
 selector_types = ["SEL_NN", "SEL_KNN"]
+all_lists = [detector_types, matcher_types, descriptor_types,selector_types]
 
 EXECUTABLE = "./2D_feature_tracking"
 WORKING_DIR = "build"
@@ -77,7 +80,15 @@ def task_8():
             print_str = print_str + "\", \",\")"
             print(print_str)
 
+def task_9():
+    pass
 
 if __name__ == "__main__":
+    if with_cuda == False:
+        for ls in all_lists:
+            for i in ls:
+                if "CUDA" in i:
+                    ls.remove(i)
     # task_7()
-    task_8()
+    # task_8()
+    task_9()
