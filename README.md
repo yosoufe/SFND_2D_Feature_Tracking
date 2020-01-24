@@ -41,7 +41,7 @@ The idea of the camera course is to build a collision detection system - that's 
 
       * With GPU support: `cmake -DWITH_CUDA=ON .. && make`:
          
-         In case of GPU supports the extra following items would be available: 
+         In case with of GPU support the extra following items would be available: 
             
           * detectors: **ORB_CUDA** and **FAST_CUDA**
           * matcher: **MAT_BF_CUDA**
