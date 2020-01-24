@@ -36,9 +36,9 @@ int main(int argc, const char *argv[])
     const char* matcherTypeC = "MAT_BF";          // MAT_BF, MAT_FLANN
     const char* descriptorTypeC = "BRISK";        // BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
     const char* selectorTypeC = "SEL_NN";         // SEL_NN, SEL_KNN
-    bool bFocusOnVehicle = false;
-    bool bLimitKpts = false;
-    bool bQuiet = false;
+    int bFocusOnVehicle = 0;                      // zero = false, none-zero = True
+    int bLimitKpts = 0;                           // zero = false, none-zero = True
+    int bQuiet = 0;                               // zero = false, none-zero = True
 
     struct argparse_option options[] = {
         OPT_HELP(),
@@ -57,7 +57,7 @@ int main(int argc, const char *argv[])
         OPT_BOOLEAN('f', "focus_on_vehicle", &bFocusOnVehicle, "To focus on only keypoints that are on the preceding vehicle."),
         OPT_BOOLEAN('l', "limit_keypoints", &bLimitKpts, "To limit the number of keypoints to maximum 50 keypoints."),
         OPT_BOOLEAN('q', "quiet", &bQuiet, "If this flaged is chosen no image would be shown. Good for performance measurement"),
-        OPT_END(),
+        OPT_END()
     };
     struct argparse argparse;
     argparse_init(&argparse, options, usage, 0);
@@ -68,9 +68,6 @@ int main(int argc, const char *argv[])
     std::string matcherType(matcherTypeC);    
     std::string descriptorType(descriptorTypeC);
     std::string selectorType(selectorTypeC);
-
-    bQuiet = true;
-    bFocusOnVehicle = true;
 
     /* INIT VARIABLES AND DATA STRUCTURES */
 
