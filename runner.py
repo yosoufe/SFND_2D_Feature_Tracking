@@ -55,9 +55,9 @@ def task_7():
             match = number_of_keypoints_regex.match(l)
             if match:
                 number_of_keypoints.append(int(match.group(1)))
-        print_str = detector + " =SPLIT(\""
+        print_str = "=SPLIT(\" {}, ".format(detector)
         for n in number_of_keypoints:
-            print_str = print_str + "{}, ".format(n)
+            print_str = print_str + ",{} ".format(n)
         print_str = print_str + "\", \",\")"
         print(print_str)
 
