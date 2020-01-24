@@ -64,16 +64,16 @@ The idea of the camera course is to build a collision detection system - that's 
 
       Optional Arguments: 
           --detector_type=<str>     detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT
-              if compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA
-              default: SHITOMASI
+                                    if compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA
+                                    default: SHITOMASI
           --matcher_type=<str>      matcher type, options: MAT_BF, MAT_FLANN,
-              if compiled (WITH_CUDA on): MAT_BF_CUDA
-              default: MAT_BF
+                                    if compiled (WITH_CUDA on): MAT_BF_CUDA
+                                    default: MAT_BF
           --descriptor_type=<str>   descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
-              if compiled (WITH_CUDA on): ORB_CUDA
-              default: BRISK
+                                    if compiled (WITH_CUDA on): ORB_CUDA
+                                    default: BRISK
           --selector_type=<str>     selector type, options: SEL_NN, SEL_KNN
-              default: SEL_NN
+                                    default: SEL_NN
           -f, --focus_on_vehicle    To focus on only keypoints that are on the preceding vehicle.
           -l, --limit_keypoints     To limit the number of keypoints to maximum 50 keypoints.
           -q, --quiet               If this flag is chosen no image would be shown. Good for performance measurement
