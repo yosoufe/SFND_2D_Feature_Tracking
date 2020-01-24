@@ -45,6 +45,7 @@ def run_command(detector_type="SHITOMASI",
 
 
 def task_7():
+    print ("TASK 7")
     for detector in detector_types:
         number_of_keypoints_regex = re.compile(
             "Number of Keypoints on Preceding Vehicle: ([0-9]+)")
@@ -62,6 +63,7 @@ def task_7():
 
 
 def task_8():
+    print ("TASK 8")
     matched_keypoints_regex = re.compile(
             "Number of Matched Keypoints: ([0-9]+)")
     for detector in detector_types:
@@ -81,6 +83,7 @@ def task_8():
             print(print_str)
 
 def task_9():
+    print ("TASK 9")
     floating_pattern = "([0-9]*.[0-9]+)"
     detection_time_regex = re.compile(
             ".* keypoints in {} ms".format(floating_pattern))
