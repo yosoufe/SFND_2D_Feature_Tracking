@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
     // parse command line arguments:
     static const char *const usage[] = {
         "./2D_feature_tracking [args]\n"
-        "For example: ./2D_feature_tracking --detector_type=BRISK --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN",
+        "For example: ./2D_feature_tracking --detector_type=BRISK --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN -f",
         NULL,
         NULL
     };
@@ -56,12 +56,12 @@ int main(int argc, const char *argv[])
                                                           "\n\t\t\t\tdefault: SEL_NN"),
         OPT_BOOLEAN('f', "focus_on_vehicle", &bFocusOnVehicle, "To focus on only keypoints that are on the preceding vehicle."),
         OPT_BOOLEAN('l', "limit_keypoints", &bLimitKpts, "To limit the number of keypoints to maximum 50 keypoints."),
-        OPT_BOOLEAN('q', "quiet", &bQuiet, "If this flaged is chosen no image would be shown. Good for performance measurement"),
+        OPT_BOOLEAN('q', "quiet", &bQuiet, "If this flag is chosen no image would be shown. Good for performance measurement"),
         OPT_END()
     };
     struct argparse argparse;
     argparse_init(&argparse, options, usage, 0);
-    argparse_describe(&argparse, "\nExplores differenet 2d keypoint detector, descriptor and matching", NULL);
+    argparse_describe(&argparse, "\nExplores different 2d keypoint detector, descriptor and matching", NULL);
     argc = argparse_parse(&argparse, argc, argv);
 
     std::string detectorType(detectorTypeC);
