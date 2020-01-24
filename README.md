@@ -55,26 +55,26 @@ The idea of the camera course is to build a collision detection system - that's 
 
       ```
       $ ./2D_feature_tracking -h
-        Usage: ./2D_feature_tracking [args]
-        For example: ./2D_feature_tracking --detector_type=BRISK --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN -f -q
+      Usage: ./2D_feature_tracking [args]
+      For example: ./2D_feature_tracking --detector_type=BRISK --matcher_type=MAT_FLANN --descriptor_type=DES_BINARY --selector_type=SEL_KNN -f -q
 
-        Explores different 2d keypoint detector, descriptor and matching
+      Explores different 2d keypoint detector, descriptor and matching
 
-            -h, --help                show this help message and exit
+          -h, --help                show this help message and exit
 
-        Optional Arguments: 
-            --detector_type=<str>     detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT
-                if compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA
-                default: SHITOMASI
-            --matcher_type=<str>      matcher type, options: MAT_BF, MAT_FLANN,
-                if compiled (WITH_CUDA on): MAT_BF_CUDA
-                default: MAT_BF
-            --descriptor_type=<str>   descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
-                if compiled (WITH_CUDA on): ORB_CUDA
-                default: BRISK
-            --selector_type=<str>     selector type, options: SEL_NN, SEL_KNN
-                default: SEL_NN
-            -f, --focus_on_vehicle    To focus on only keypoints that are on the preceding vehicle.
-            -l, --limit_keypoints     To limit the number of keypoints to maximum 50 keypoints.
-            -q, --quiet               If this flag is chosen no image would be shown. Good for performance measurement
+      Optional Arguments: 
+          --detector_type=<str>     detector type, options: SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, and SIFT
+              if compiled (WITH_CUDA on): ORB_CUDA, FAST_CUDA
+              default: SHITOMASI
+          --matcher_type=<str>      matcher type, options: MAT_BF, MAT_FLANN,
+              if compiled (WITH_CUDA on): MAT_BF_CUDA
+              default: MAT_BF
+          --descriptor_type=<str>   descriptor type, options: BRISK BRIEF, ORB, FREAK, AKAZE, SIFT
+              if compiled (WITH_CUDA on): ORB_CUDA
+              default: BRISK
+          --selector_type=<str>     selector type, options: SEL_NN, SEL_KNN
+              default: SEL_NN
+          -f, --focus_on_vehicle    To focus on only keypoints that are on the preceding vehicle.
+          -l, --limit_keypoints     To limit the number of keypoints to maximum 50 keypoints.
+          -q, --quiet               If this flag is chosen no image would be shown. Good for performance measurement
       ```
