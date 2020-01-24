@@ -28,7 +28,7 @@ The idea of the camera course is to build a collision detection system - that's 
 
 ## Basic Build Instructions
 
-1. Clone this repo and submodule [argparse](https://github.com/cofyc/argparse).
+1. Clone this repo and submodule [argparse](https://github.com/cofyc/argparse) as follow.
 
    ```
    git clone https://github.com/yosoufe/SFND_2D_Feature_Tracking.git
