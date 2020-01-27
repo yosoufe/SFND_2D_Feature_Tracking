@@ -17,6 +17,7 @@ This is a report to cover the PROJECT SPECIFICATION for 2nd project of Sensor Fu
 This is required for long data stream of images. The following code section would implement a std::vector that 
 its size would never get larger than the specified values `dataBufferSize`, here 2. When the size is smaller than `dataBufferSize` frame is being added normally. But when the buffer full, first the frames in the buffer are copied 
 to the location with one index less and then the new frame is being copied two the end of the buffer.
+This is implemented in `src/MidTermProject_Camera_Student.cpp` file.
 ```c++
 DataFrame frame;
 frame.cameraImg = imgGray;
@@ -47,6 +48,7 @@ SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT, ORB_CUDA and FAST_CUDA.
 Of course the CUDA ones would only work of the project is compiled with CUDA option
 enabled. Please checkout the readme file on how to enable it. The following function 
 is creating multiple detectors based on the given string and also extracts the keypoints.
+This is implemented in `src/matching2D_Student.cpp` file.
 ```c++
 void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints,
                         cv::Mat &img,
@@ -98,7 +100,7 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints,
 #endif // WITH_CUDA
 }
 ```
-
+HARRIS and SHITOMASI are defined in other functions called `detKeypointsHarris` and `detKeypointsShiTomasi` in the same file.
 
 <a name="MP3" />
 
