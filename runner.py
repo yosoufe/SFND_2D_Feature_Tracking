@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-with_cuda = True
+with_cuda = False
 
 detector_types = ["SHITOMASI", "HARRIS", "FAST",
                   "FAST_CUDA", "BRISK", "ORB", "ORB_CUDA", "AKAZE", "SIFT"]
@@ -124,6 +124,6 @@ if __name__ == "__main__":
             for i in ls:
                 if "CUDA" in i:
                     ls.remove(i)
-    #task_7()
-    #task_8()
+    task_7()
+    task_8()
     task_9()
