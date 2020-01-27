@@ -372,6 +372,9 @@ The table is sorted based on the Average column and in increasing order. In this
 only used to calculate the average time. Because the first image took a lot of time probably for initialization of 
 objects which should be ignored for long stream of sensor frame data.
 
+The measurement for the CUDA ones is not 100% fair because it is not optimized well. There are a lot copy and paste between 
+the CPU memory and GPU memory which is happening and can be optimized later. Though they are showing good performance.
+
 |  **Detector** | **Descriptor** | **Average** | **Image 0** | **Image 1** | **Image 2** | **Image 3** | **Image 4** | **Image 5** | **Image 6** | **Image 7** | **Image 8** | **Image 9** |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 |  **FAST_CUDA** | **BRIEF** | 0.9799766667 | 141.7679 | 1.457381 | 1.059315 | 1.073808 | 0.868882 | 0.841434 | 0.878895 | 0.875319 | 0.813041 | 0.951715 |
