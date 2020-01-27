@@ -25,7 +25,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     else if(descriptorType.compare("SIFT") == 0)
         normType = cv::NORM_L2;
 
-    cv::Ptr<cv::DescriptorMatcher> matcher;
+    cv::Ptr<cv::DescriptorMatcher> matcher = nullptr;
 
     if (matcherType.compare("MAT_BF") == 0)
     {
@@ -76,6 +76,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         return;
     }
 #endif
+
+    if (matcher == nullptr) return;
 
     // perform matching task
     if (selectorType.compare("SEL_NN") == 0)
