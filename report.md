@@ -1,9 +1,20 @@
 # Report
 
+## Content
 - [Introduction](#Introduction)
-- [MP1 - Data Buffer Optimization](#MP1)
-- [MP2 - Keypoint Detection](#MP2)
-- [MP3 - Keypoint Removal](#MP3)
+- [Data Buffer](#DataBuffer)
+    - [MP1 - Data Buffer Optimization](#MP1)
+- [Keypoints](#Keypoints)
+    - [MP2 - Keypoint Detection](#MP2)
+    - [MP3 - Keypoint Removal](#MP3)
+- [Descriptors](#Descriptors)
+    - [MP4 - Keypoint Descriptors](#MP4)
+    - [MP5 - Descriptor Matching](#MP5)
+    - [MP6 - Descriptor Distance Ratio](#MP6)
+- [Performance](#Performance)
+    - [MP7 - Performance Evaluation 1](#MP7)
+    - [MP8 - Performance Evaluation 2](#MP8)
+    - [MP9 - Performance Evaluation 3](#MP9)
 
 <a name="Introduction" />
 
@@ -11,9 +22,13 @@
 This is a report to cover the PROJECT SPECIFICATION for 2nd project of Sensor Fusion Nanodegree, **2D Feature Tracking**.
 
 
+<a name="DataBuffer" />
+
+## Data Buffer
+
 <a name="MP1" />
 
-## MP1 - Data Buffer Optimization
+### MP1 - Data Buffer Optimization
 This is required for long data stream of images. The following code section would implement a std::vector that 
 its size would never get larger than the specified values `dataBufferSize`, here 2. When the size is smaller than `dataBufferSize` frame is being added normally. But when the buffer full, first the frames in the buffer are copied 
 to the location with one index less and then the new frame is being copied two the end of the buffer.
@@ -40,9 +55,13 @@ not be ideal. In this case,
 [Circular Buffer from Boost library](https://www.boost.org/doc/libs/1_61_0/doc/html/circular_buffer.html) 
 is highly recommended.
 
+<a name="Keypoints" />
+
+## Keypoints
+
 <a name="MP2" />
 
-## MP2 - Keypoint Detection
+### MP2 - Keypoint Detection
 Multiple detectors have been integrated from OpenCV including 
 SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT, ORB_CUDA and FAST_CUDA. 
 Of course the CUDA ones would only work of the project is compiled with CUDA option
@@ -104,7 +123,7 @@ HARRIS and SHITOMASI are defined in other functions called `detKeypointsHarris` 
 
 <a name="MP3" />
 
-## MP3 - Keypoint Removal
+### MP3 - Keypoint Removal
 
 For debug purpose and also as specified in this project specification it is nice to just focus on the keypoints that 
 are on the preceding vehicle. This is done by using `cv::Rect` type and its `cv::Rect::contains` member function 
@@ -129,3 +148,104 @@ if (bFocusOnVehicle)
     cout << "Number of Keypoints on Preceding Vehicle: " << keypoints.size() << endl;
 }
 ```
+
+<a name="Descriptors" />
+
+## Descriptors
+
+<a name="MP4" />
+
+### MP4 - Keypoint Descriptors
+
+Different keypoint descriptors such as BRISK BRIEF, ORB, FREAK, AKAZE, SIFT and ORB_CUDA are integrated in the following function in `src/matching2D_Student.cpp`. Of course the CUDA ones would only work of the project is compiled with CUDA option
+enabled.
+
+```c++
+void descKeypoints(vector<cv::KeyPoint> &keypoints, 
+                   cv::Mat &img, 
+                   cv::Mat &descriptors, 
+                   string descriptorType)
+{
+    // select appropriate descriptor
+    cv::Ptr<cv::DescriptorExtractor> extractor = nullptr;
+    if (descriptorType.compare("BRISK") == 0)
+    {
+
+        int threshold = 30;        // FAST/AGAST detection threshold score.
+        int octaves = 3;           // detection octaves (use 0 to do single scale)
+        float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
+
+        extractor = cv::BRISK::create(threshold, octaves, patternScale);
+    }
+    // BRIEF, ORB, FREAK, AKAZE, SIFT
+    else if (descriptorType.compare("BRIEF") == 0)
+    {
+        int bytes=32;               // length of the descriptor in bytes, valid values are: 16, 32 (default) or 64 .
+        bool use_orientation=false; // sample patterns using keypoints orientation, disabled by default.
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create(bytes, use_orientation);
+        
+    }
+    else if (descriptorType.compare("ORB") == 0)
+    {
+        extractor = cv::ORB::create();
+    } 
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+        extractor = cv::xfeatures2d::FREAK::create();
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+        extractor = cv::AKAZE::create();
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+        extractor = cv::xfeatures2d::SIFT::create();
+    }
+
+    if (extractor) 
+    {
+        // perform feature description
+        extractor->compute(img, keypoints, descriptors);
+        return;
+    }
+#if WITH_CUDA
+    if(descriptorType.compare("ORB_CUDA") == 0)
+    {
+        extractor = cv::cuda::ORB::create();
+    }
+    if (extractor) 
+    {
+        cv::cuda::GpuMat imageGpu;
+        cv::cuda::GpuMat d_descriptors;
+        imageGpu.upload(img);
+        extractor->compute(imageGpu, keypoints, d_descriptors);
+        d_descriptors.download(descriptors);
+        
+    }
+#endif // WITH_CUDA
+}
+```
+
+<a name="MP5" />
+
+### MP5 - Descriptor Matching
+
+<a name="MP6" />
+
+### MP6 - Descriptor Distance Ratio
+
+<a name="Performance" />
+
+## Performance
+
+<a name="MP7" />
+
+### MP7 - Performance Evaluation 1
+
+<a name="MP8" />
+
+### MP8 - Performance Evaluation 2
+
+<a name="MP9" />
+
+### MP9 - Performance Evaluation 3
