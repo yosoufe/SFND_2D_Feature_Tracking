@@ -274,7 +274,7 @@ All the following numbers are being calculated on my local machine rather than U
 
 The following table shows the **number of keypoints on the preceding vehicles** 
 for different detector for all 10 images and sorted based on the average column 
-in increasing order.
+in decreasing order.
 
 |  **Detector** | **Average** | **Image 0** | **Image 1** | **Image 2** | **Image 3** | **Image 4** | **Image 5** | **Image 6** | **Image 7** | **Image 8** | **Image 9** |  |
 | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | --- |
@@ -294,7 +294,7 @@ in increasing order.
 
 The following table **counts the number of matched keypoints** for all 10 images using 
 all possible combinations of detectors and descriptors. 
-It is sorted based on the Average column in an increasing order. 
+It is sorted based on the Average column in decreasing order. 
 In the matching step, the BF approach is used with the descriptor distance ratio set to 0.8.
 
 |  **Detector** | **Descriptor** | **Average** | **Images 0-1** | **Images 1-2** | **Images 2-3** | **Images 3-4** | **Images 4-5** | **Images 5-6** | **Images 6-7** | **Images 7-8** | **Images 8-9** |
@@ -368,7 +368,7 @@ In the matching step, the BF approach is used with the descriptor distance ratio
 ### MP9 - Performance Evaluation 3
 
 The following table describes **the time it takes for keypoint detection and descriptor extraction in milliseconds**.
-The table is sorted based on the Average column and in decreasing order. In this table the time for images 1 to 9 are 
+The table is sorted based on the Average column and in increasing order. In this table the time for images 1 to 9 are 
 only used to calculate the average time. Because the first image took a lot of time probably for initialization of 
 objects which should be ignored for long stream of sensor frame data.
 
