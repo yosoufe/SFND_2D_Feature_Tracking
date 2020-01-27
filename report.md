@@ -113,6 +113,7 @@ and removing the points that are not in that list.
 This feature is dependent on the boolean flag `bFocusOnVehicle` which can be assigned with `-f` argument when executing the 
 project executable.
 
+This is implemented in `src/MidTermProject_Camera_Student.cpp` file.
 ```c++
 // only keep keypoints on the preceding vehicle
 if (bFocusOnVehicle)
