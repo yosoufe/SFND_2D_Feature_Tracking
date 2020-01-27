@@ -48,65 +48,52 @@ Of course the CUDA ones would only work of the project is compiled with CUDA opt
 enabled. Please checkout the readme file on how to enable it. The following function 
 is creating multiple detectors based on the given string and also extracts the keypoints.
 ```c++
-void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descriptors, string descriptorType)
+void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
 {
-    // select appropriate descriptor
-    cv::Ptr<cv::DescriptorExtractor> extractor = nullptr;
-    if (descriptorType.compare("BRISK") == 0)
+    cv::Ptr<cv::FeatureDetector> detector = nullptr;
+    if (detectorType.compare("FAST") == 0)
     {
-
-        int threshold = 30;        // FAST/AGAST detection threshold score.
-        int octaves = 3;           // detection octaves (use 0 to do single scale)
-        float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
-
-        extractor = cv::BRISK::create(threshold, octaves, patternScale);
-    }
-    // BRIEF, ORB, FREAK, AKAZE, SIFT
-    else if (descriptorType.compare("BRIEF") == 0)
-    {
-        int bytes=32;               // length of the descriptor in bytes, valid values are: 16, 32 (default) or 64 .
-        bool use_orientation=false; // sample patterns using keypoints orientation, disabled by default.
-        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create(bytes, use_orientation);
-        
-    }
-    else if (descriptorType.compare("ORB") == 0)
-    {
-        extractor = cv::ORB::create();
+        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
+        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
+        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
+        detector = cv::FastFeatureDetector::create(threshold, bNMS, type);
+    // https://docs.opencv.org/4.1.0/d5/d51/group__features2d__main.html
+    // BRISK, ORB, AKAZE, and SIFT
+    } else if (detectorType.compare("BRISK") == 0){
+        detector = cv::BRISK::create();
+    } else if (detectorType.compare("ORB") == 0){
+        detector = cv::ORB::create();
+    } else if (detectorType.compare("AKAZE") == 0){
+        detector = cv::AKAZE::create();
+    } else if (detectorType.compare("SIFT") == 0){
+        detector = cv::xfeatures2d::SIFT::create();
     } 
-    else if (descriptorType.compare("FREAK") == 0)
+    if (detector) 
     {
-        extractor = cv::xfeatures2d::FREAK::create();
-    }
-    else if (descriptorType.compare("AKAZE") == 0)
-    {
-        extractor = cv::AKAZE::create();
-    }
-    else if (descriptorType.compare("SIFT") == 0)
-    {
-        extractor = cv::xfeatures2d::SIFT::create();
-    }
-
-    if (extractor) 
-    {
-        // perform feature description
-        extractor->compute(img, keypoints, descriptors);
+        detector->detect(img, keypoints);
         return;
     }
+
 #if WITH_CUDA
-    if(descriptorType.compare("ORB_CUDA") == 0)
+    if(detectorType.compare("ORB_CUDA") == 0)
     {
-        extractor = cv::cuda::ORB::create();
+        detector = cv::cuda::ORB::create();
+    } 
+    else if(detectorType.compare("FAST_CUDA") == 0)
+    {
+        int threshold = 30;                                                              // difference between intensity of the central pixel and pixels of a circle around this pixel
+        bool bNMS = true;                                                                // perform non-maxima suppression on keypoints
+        cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
+        detector = cv::cuda::FastFeatureDetector::create(threshold, bNMS, type);
     }
-    if (extractor) 
+    if (detector) 
     {
         cv::cuda::GpuMat imageGpu;
-        cv::cuda::GpuMat d_descriptors;
         imageGpu.upload(img);
-        extractor->compute(imageGpu, keypoints, d_descriptors);
-        d_descriptors.download(descriptors);
-        
+        detector->detect(imageGpu, keypoints);
     }
-#endif // 
+#endif // WITH_CUDA
+}
 ```
 
 
