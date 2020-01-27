@@ -46,7 +46,7 @@ Multiple detectors have been integrated from OpenCV including
 SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE, SIFT, ORB_CUDA and FAST_CUDA. 
 Of course the CUDA ones would only work of the project is compiled with CUDA option
 enabled. Please checkout the readme file on how to enable it. The following function 
-is creating multiple detectors based on the given string
+is creating multiple detectors based on the given string and also extracts the keypoints.
 ```c++
 void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descriptors, string descriptorType)
 {
