@@ -15,6 +15,7 @@
     - [MP7 - Performance Evaluation 1](#MP7)
     - [MP8 - Performance Evaluation 2](#MP8)
     - [MP9 - Performance Evaluation 3](#MP9)
+- [Conclusion](#Conclusion)
 
 <a name="Introduction" />
 
@@ -429,3 +430,8 @@ the CPU memory and GPU memory which is happening and can be optimized later. Tho
 |  **ORB** | **AKAZE** | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 |  **ORB_CUDA** | **AKAZE** | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
 |  **SIFT** | **ORB** | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A |
+
+
+<a name="Conclusion" />
+
+## Conclusion
