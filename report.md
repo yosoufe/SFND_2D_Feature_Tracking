@@ -367,7 +367,7 @@ In the matching step, the BF approach is used with the descriptor distance ratio
 
 ### MP9 - Performance Evaluation 3
 
-The following table describes **the time it takes for keypoint detection and descriptor extraction in seconds**.
+The following table describes **the time it takes for keypoint detection and descriptor extraction in milliseconds**.
 The table is sorted based on the Average column and in decreasing order. In this table the time for images 1 to 9 are 
 only used to calculate the average time. Because the first image took a lot of time probably for initialization of 
 objects which should be ignored for long stream of sensor frame data.
