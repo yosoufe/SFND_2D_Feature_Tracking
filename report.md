@@ -105,3 +105,26 @@ HARRIS and SHITOMASI are defined in other functions called `detKeypointsHarris` 
 <a name="MP3" />
 
 ## MP3 - Keypoint Removal
+
+For debug purpose and also as specified in this project specification it is nice to just focus on the keypoints that 
+are on the preceding vehicle. This is done by using `cv::Rect` type and its `cv::Rect::contains` member function 
+and removing the points that are not in that list.
+
+This feature is dependent on the boolean flag `bFocusOnVehicle` which can be assigned with `-f` argument when executing the 
+project executable.
+
+```c++
+// only keep keypoints on the preceding vehicle
+if (bFocusOnVehicle)
+{
+    cv::Rect vehicleRect(535, 180, 180, 150);
+    std::vector<cv::KeyPoint> kp_on_preceding_car;
+    for (auto & kpt : keypoints)
+    {
+        if (vehicleRect.contains(kpt.pt))
+            kp_on_preceding_car.push_back(kpt);
+    }
+    keypoints = kp_on_preceding_car;
+    cout << "Number of Keypoints on Preceding Vehicle: " << keypoints.size() << endl;
+}
+```
