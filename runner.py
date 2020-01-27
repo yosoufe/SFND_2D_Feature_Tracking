@@ -1,7 +1,7 @@
 import subprocess
 import re
 
-with_cuda = False
+with_cuda = True
 
 detector_types = ["SHITOMASI", "HARRIS", "FAST",
                   "FAST_CUDA", "BRISK", "ORB", "ORB_CUDA", "AKAZE", "SIFT"]
@@ -110,7 +110,7 @@ def task_9():
                     total_time.append(det_time[i] + ext_time[i])
             else:
                 print (detector, descriptor, det_time, ext_time)
-                break
+                continue
             
             print_str = "=SPLIT(\" {}, {} ".format(detector, descriptor)
             for n in total_time:
@@ -124,6 +124,6 @@ if __name__ == "__main__":
             for i in ls:
                 if "CUDA" in i:
                     ls.remove(i)
-    task_7()
-    task_8()
+    #task_7()
+    #task_8()
     task_9()
