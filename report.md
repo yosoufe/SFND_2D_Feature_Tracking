@@ -48,7 +48,10 @@ Of course the CUDA ones would only work of the project is compiled with CUDA opt
 enabled. Please checkout the readme file on how to enable it. The following function 
 is creating multiple detectors based on the given string and also extracts the keypoints.
 ```c++
-void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
+void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints,
+                        cv::Mat &img,
+                        std::string detectorType,
+                        bool bVis)
 {
     cv::Ptr<cv::FeatureDetector> detector = nullptr;
     if (detectorType.compare("FAST") == 0)
