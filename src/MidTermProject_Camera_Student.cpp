@@ -17,6 +17,7 @@
 #include "matching2D.hpp"
 
 #include "argparse.h"
+#include <numeric>
 
 using namespace std;
 
@@ -190,6 +191,15 @@ int main(int argc, const char *argv[])
             cv::KeyPointsFilter::retainBest(keypoints, maxKeypoints);
             if (!bQuiet) cout << " NOTE: Keypoints have been limited!" << endl;
         }
+
+        // double mean = std::accumulate(keypoints.size.begin(), keypoints.size.end(), 0.0)/keypoints.size();
+        // auto add_square = [mean](double sum, int i)
+        // {
+        //     auto d = i - mean;
+        //     return sum + d*d;
+        // };
+        // double total = std::accumulate(keypoints.size.begin(), keypoints.size.end(), 0.0, add_square);
+        // double variance = total / keypoints.size();
 
         // push keypoints and descriptor for current frame to end of data buffer
         (dataBuffer.end() - 1)->keypoints = keypoints;
